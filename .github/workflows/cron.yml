@@ -28,4 +28,5 @@ jobs:
           INBOUND_URL: ${{ secrets.INBOUND_URL }}
           INBOUND_API_KEY: ${{ secrets.INBOUND_API_KEY }}
           WEATHERAPI_KEY:   ${{ secrets.WEATHERAPI_KEY }}
+          BLOCKBAX_PROPERTY_URL: ${{ secrets.BLOCKBAX_PROPERTY_URL }}
         run: python simulate_solar.py
