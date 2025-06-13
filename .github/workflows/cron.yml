@@ -1,17 +1,17 @@
-name: Solar Data Cron
+name: Demo Data Cron
 
 on:
   schedule:
-    # every 15 minutes
     - cron: '*/15 * * * *'
   workflow_dispatch:
 
 jobs:
-  send-solar-data:
+  run-simulations:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Check out repo
+        uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -23,10 +23,22 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run solar simulation
+      - name: Run solar-inverter simulation
         env:
-          INBOUND_URL: ${{ secrets.INBOUND_URL }}
-          INBOUND_API_KEY: ${{ secrets.INBOUND_API_KEY }}
-          WEATHERAPI_KEY:   ${{ secrets.WEATHERAPI_KEY }}
-          BLOCKBAX_PROPERTY_URL: ${{ secrets.BLOCKBAX_PROPERTY_URL }}
+          INBOUND_URL:            ${{ secrets.INBOUND_URL }}
+          INBOUND_API_KEY:        ${{ secrets.INBOUND_API_KEY }}
+          WEATHERAPI_KEY:         ${{ secrets.WEATHERAPI_KEY }}
+          BLOCKBAX_PROPERTY_URL:  ${{ secrets.BLOCKBAX_PROPERTY_URL }}
         run: python simulate_solar.py
+
+      - name: Run room-power simulation via API
+        env:
+          SUBJECTS_URL:           ${{ secrets.SUBJECTS_URL }}
+          MEASUREMENTS_URL:       ${{ secrets.MEASUREMENTS_URL }}
+          ROOM_SUBJECTTYPEID:     ${{ secrets.ROOM_SUBJECTTYPEID }}
+          OCCUPANCY_METRICID:     ${{ secrets.OCCUPANCY_METRICID }}
+          MEASUREMENTS_POST_URL:  ${{ secrets.MEASUREMENTS_POST_URL }}
+          INBOUND_API_KEY:        ${{ secrets.INBOUND_API_KEY }}
+          BUILDING_ID:            ${{ secrets.BUILDING_ID }}
+          TZ:                     'Europe/Amsterdam'
+        run: python simulate_rooms_api.py
