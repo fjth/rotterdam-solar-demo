@@ -41,26 +41,26 @@ def simulate_and_send():
     cloud_frac = weather['cloud_pct'] / 100.0
     ghi_effective = ghi_clear * (1 - 0.75 * cloud_frac)
 
-    # 5) Simulate multiple panels with slight variance
-    num_panels = 8
-    panel_area = 1.6   # m² per panel
+    # 5) Simulate multiple inverters with slight variance
+    num_inverters = 8
+    panel_area = 1.6   # m² per inverter simulation unit
     efficiency = 0.18  # 18%
-    power_per_panel = ghi_effective * panel_area * efficiency
+    power_per_unit = ghi_effective * panel_area * efficiency
 
     measurements = []
-    for i in range(1, num_panels + 1):
-        # Apply a random +/-5% variance per panel
+    for i in range(1, num_inverters + 1):
+        # Apply a random +/-5% variance per inverter
         variation = random.uniform(0.95, 1.05)
-        power_varied = round(power_per_panel * variation, 1)
+        power_varied = round(power_per_unit * variation, 1)
         measurements.append({
-            'subject_id': f'panel_{i}',
+            'subject_id': f'inverter_{i}',
             'power_w': power_varied
         })
 
     # 6) Build payload
     payload = {
         'building_id': 'fenix-i',
-        'sensor_type': 'solar_panel',
+        'sensor_type': 'solar_inverter',
         'timestamp': timestamp,
         'weather': weather,
         'measurements': measurements
