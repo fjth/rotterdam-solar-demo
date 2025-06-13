@@ -27,4 +27,5 @@ jobs:
         env:
           INBOUND_URL: ${{ secrets.INBOUND_URL }}
           INBOUND_API_KEY: ${{ secrets.INBOUND_API_KEY }}
+          WEATHERAPI_KEY:   ${{ secrets.WEATHERAPI_KEY }}
         run: python simulate_solar.py
