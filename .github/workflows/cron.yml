@@ -2,7 +2,8 @@ name: Demo Data Cron
 
 on:
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
 
 jobs:
   run-simulations:
@@ -28,7 +29,7 @@ jobs:
           INBOUND_API_KEY:        ${{ secrets.INBOUND_API_KEY }}
           WEATHERAPI_KEY:         ${{ secrets.WEATHERAPI_KEY }}
           BLOCKBAX_PROPERTY_URL:  ${{ secrets.BLOCKBAX_PROPERTY_URL }}
-        run: python simulate_solar.py
+        run: python3 simulate_solar.py
 
       - name: Run room-power simulation via API
         env:
@@ -40,4 +41,4 @@ jobs:
           INBOUND_API_KEY:        ${{ secrets.INBOUND_API_KEY }}
           BUILDING_ID:            ${{ secrets.BUILDING_ID }}
           TZ:                     'Europe/Amsterdam'
-        run: python simulate_rooms_api.py
+        run: python3 simulate_rooms_api.py
