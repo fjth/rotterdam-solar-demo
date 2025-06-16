@@ -52,13 +52,29 @@ def simulate_and_send():
         external_id = id_to_external.get(internal_id)
         if not external_id:
             continue
-        base_load = 100.0
-        variation = random.uniform(0.8, 1.2)
-        power_w = round(base_load * occ * variation, 1)
+        base_power = 100.0                # W per room
+        base_gas = 0.05                   # cubic meters per occupant
+        base_water = 5.0                  # liters per occupant
+
+        variation_power = random.uniform(0.8, 1.2)  # ±20%
+        variation_gas = random.uniform(0.8, 1.2)
+        variation_water = random.uniform(0.8, 1.2)
+
+        power_w = round(base_power * occ * variation_power, 1)
+        gas_m3 = round(base_gas * occ * variation_gas, 3)
+        water_l = round(base_water * occ * variation_water, 1)
+
         measurements.append({
             'subject_id': external_id,
-            'power_w': power_w
+            'power_w': power_w,
+            'gas_m3': gas_m3,
+            'water_l': water_l
         })
+
+    # Log summary of generated metrics
+    print(f"Generated {len(measurements)} room usage entries")
+    for m in measurements:
+        # print(f"  Room {m['subject_id']}: power={m['power_w']}W, gas={m['gas_m3']}m³, water={m['water_l']}L")
 
     # Final payload with single timestamp
     payload = {
@@ -75,7 +91,7 @@ def simulate_and_send():
         'Authorization': f"ApiKey {os.environ['INBOUND_API_KEY']}"
     }
     resp = requests.post(post_url, json=payload, headers=headers)
-    print(f"Posted room power data: {resp.status_code} {resp.text}")
+    print(f"Measurements POST → {resp.status_code}")
 
 if __name__ == '__main__':
     simulate_and_send()
