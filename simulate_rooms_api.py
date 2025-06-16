@@ -73,8 +73,6 @@ def simulate_and_send():
 
     # Log summary of generated metrics
     print(f"Generated {len(measurements)} room usage entries")
-    for m in measurements:
-        # print(f"  Room {m['subject_id']}: power={m['power_w']}W, gas={m['gas_m3']}m³, water={m['water_l']}L")
 
     # Final payload with single timestamp
     payload = {
