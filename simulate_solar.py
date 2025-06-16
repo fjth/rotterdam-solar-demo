@@ -61,6 +61,13 @@ def simulate_and_send():
             'power_w': round(base_power * variation, 1)
         })
 
+    # Aggregate total inverter power for the building-level measurement
+    total_power = sum(m['power_w'] for m in measurements)
+    measurements.append({
+        'subject_id': 'fenix-i',
+        'power_w': round(total_power, 1)
+    })
+
     # 6) Build payload
     payload = {
         'building_id': 'fenix-i',

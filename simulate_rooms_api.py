@@ -41,6 +41,9 @@ def simulate_and_send():
     tz = 'Europe/Amsterdam'
     now = pd.Timestamp.now(tz=pytz.timezone(tz)).isoformat()
 
+    # Ensure BUILDING_ID has no trailing newline
+    building_id = os.environ.get('BUILDING_ID', 'fenix-i').strip()
+
     # Fetch subjects and occupancy
     id_to_external = get_room_subjects()
     internal_ids = list(id_to_external.keys())
@@ -52,6 +55,8 @@ def simulate_and_send():
         external_id = id_to_external.get(internal_id)
         if not external_id:
             continue
+        # Strip any accidental whitespace/newlines
+        external_id = external_id.strip()
         base_power = 100.0                # W per room
         base_gas = 0.05                   # cubic meters per occupant
         base_water = 5.0                  # liters per occupant
@@ -76,9 +81,9 @@ def simulate_and_send():
     total_water = sum(m.get('water_l', 0) for m in measurements if 'water_l' in m)
 
     measurements.append({
-        'subject_id': os.environ.get('BUILDING_ID', 'fenix-i'),
-        'gas_m3': round(total_gas, 3),
-        'water_l': round(total_water, 1)
+        'subject_id': building_id,
+        'gas_m3':     round(total_gas, 3),
+        'water_l':    round(total_water, 1)
     })
 
     # Log summary of generated metrics
@@ -86,7 +91,7 @@ def simulate_and_send():
 
     # Final payload with single timestamp
     payload = {
-        'building_id': os.environ.get('BUILDING_ID', 'fenix-i'),
+        'building_id': building_id,
         'sensor_type': 'room_power',
         'timestamp': now,
         'measurements': measurements
