@@ -66,10 +66,20 @@ def simulate_and_send():
 
         measurements.append({
             'subject_id': external_id,
-            'power_w': power_w,
-            'gas_m3': gas_m3,
-            'water_l': water_l
+            'power_w':    power_w,
+            'gas_m3':     gas_m3,
+            'water_l':    water_l
         })
+
+    # Aggregate gas and water usage at building level
+    total_gas = sum(m.get('gas_m3', 0) for m in measurements if 'gas_m3' in m)
+    total_water = sum(m.get('water_l', 0) for m in measurements if 'water_l' in m)
+
+    measurements.append({
+        'subject_id': os.environ.get('BUILDING_ID', 'fenix-i'),
+        'gas_m3': round(total_gas, 3),
+        'water_l': round(total_water, 1)
+    })
 
     # Log summary of generated metrics
     print(f"Generated {len(measurements)} room usage entries")
